@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/ahdinosaur/pixelbeat",
   "dependencies": {
+    "CBuffer": "^1.1.0",
+    "beats": "0.0.0",
     "frequency-viewer": "^0.1.0",
     "microphone": "git://github.com/WRMilling/node-microphone",
     "range-fit": "^0.1.1",
