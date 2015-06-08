@@ -24,6 +24,7 @@
   "homepage": "https://github.com/ahdinosaur/pixelbeat",
   "dependencies": {
     "microphone": "git://github.com/WRMilling/node-microphone",
+    "range-fit": "^0.1.1",
     "through2": "^0.6.5"
   }
 }
