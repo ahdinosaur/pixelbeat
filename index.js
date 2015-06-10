@@ -6,12 +6,15 @@ var deltaTimer = require('delta-timer')
 var beatDetector = require('beats')
 var range = require('lodash.range')
 var frameHop = require('frame-hop')
+var arrayFrom = require('array-from')
+var Ndarray = require('ndarray')
+var showNdarray = require('ndarray-show')
 
 var byteRate = 2
 var numChannels = 1
-var height = 16
-var width = 16
-var bufferSize = 4096
+var height = 8
+var width = 8
+var bufferSize = Math.pow(2, 8)
 
 mic.startCapture({
   alsa_device: 'plughw:0,0',
@@ -52,10 +55,8 @@ mic.audioStream
     }
   })
 )))
-.pipe(through.obj(function (chunk, enc, cb) {
-  this.push(JSON.stringify(chunk))
-  cb()
-}))
+.pipe(through.obj(visualizeBeats()))
+.pipe(through.obj(showVisuals()))
 .pipe(process.stdout)
 
 function fitWithinMag1 () {
@@ -93,7 +94,32 @@ function getBeats (bins) {
   return function (chunk, enc, cb) {
     var data = chunk.data
     var elap = elapsed()
-    console.log(chunk.length, elap)
     cb(null, detect(data, elap))
+  }
+}
+
+function visualizeBeats () {
+  return function (chunk, enc, cb) {
+    var beats = arrayFrom(chunk)
+    //var maxBeat = Math.max.apply(Math, beats) || 1
+    var maxBeat = 255
+    var arr = new Uint8Array(width * height)
+    for (var i = 0; i < width * height; i++) {
+      arr[i] = 0
+    }
+    var leds = Ndarray(arr, [ width, height ])
+    beats.forEach(function (beat, i) {
+      var beatHeight = Math.round((beat / maxBeat) * height)
+      for (var y = 0; y < beatHeight; y++) {
+        leds.set(i, y, 255)
+      }
+    })
+    cb(null, leds)
+  }
+}
+
+function showVisuals () {
+  return function (chunk, enc, cb) {
+    cb(null, showNdarray(chunk) + '\n\n')
   }
 }

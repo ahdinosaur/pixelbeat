@@ -24,11 +24,15 @@
   "homepage": "https://github.com/ahdinosaur/pixelbeat",
   "dependencies": {
     "CBuffer": "^1.1.0",
+    "array-from": "^1.0.0",
     "beats": "0.0.0",
     "delta-timer": "0.0.0",
+    "frame-hop": "^1.0.0",
     "frequency-viewer": "^0.1.0",
     "lodash.range": "^3.0.0",
     "microphone": "git://github.com/WRMilling/node-microphone",
+    "ndarray": "^1.0.18",
+    "ndarray-show": "^1.1.1",
     "range-fit": "^0.1.1",
     "through2": "^0.6.5"
   }
