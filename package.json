@@ -25,7 +25,9 @@
   "dependencies": {
     "CBuffer": "^1.1.0",
     "beats": "0.0.0",
+    "delta-timer": "0.0.0",
     "frequency-viewer": "^0.1.0",
+    "lodash.range": "^3.0.0",
     "microphone": "git://github.com/WRMilling/node-microphone",
     "range-fit": "^0.1.1",
     "through2": "^0.6.5"

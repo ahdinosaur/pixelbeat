@@ -3,9 +3,15 @@ var through = require('through2')
 var rangeFit = require('range-fit')
 var Cbuffer = require('CBuffer')
 var frequencyWorker = require('frequency-viewer').worker
+var deltaTimer = require('delta-timer')
+var beatDetector = require('beats')
+var range = require('lodash.range')
 
 var byteRate = 2
 var numChannels = 1
+var height = 8
+var width = 8
+var bufferSize = 4096
 
 mic.startCapture({
   alsa_device: 'plughw:0,0',
@@ -33,8 +39,19 @@ mic.audioStream
   cb(null, chunk[0])
 }))
 .pipe(through.obj(fitWithinMag1()))
-.pipe(through.obj(circularize(4000)))
+.pipe(through.obj(circularize(bufferSize)))
 .pipe(through.obj(getFrequencies()))
+.pipe(through.obj(getBeats(
+  range(width)
+  .map(function (i) {
+    return {
+      lo: (i / width) * bufferSize,
+      hi: ((i + 1) / width) * bufferSize - 1,
+      threshold: 0,
+      decay: 0.005
+    }
+  })
+)))
 .pipe(through.obj(function (chunk, enc, cb) {
   this.push(JSON.stringify(chunk))
   cb()
@@ -62,5 +79,16 @@ function circularize (length) {
 function getFrequencies () {
   return function (chunk, enc, cb) {
     cb(null, frequencyWorker(chunk))
+  }
+}
+
+function getBeats (bins) {
+  var elapsed = deltaTimer()
+  var detect = beatDetector(bins)
+  return function (chunk, enc, cb) {
+    var data = chunk.data
+    var elap = elapsed()
+    console.log(chunk.length, elap)
+    cb(null, detect(data, elap))
   }
 }
