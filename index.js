@@ -9,8 +9,8 @@ var frameHop = require('frame-hop')
 
 var byteRate = 2
 var numChannels = 1
-var height = 8
-var width = 8
+var height = 16
+var width = 16
 var bufferSize = 4096
 
 mic.startCapture({
@@ -71,7 +71,7 @@ function fitWithinMag1 () {
 function frame (frameSize) {
   var push = null
   var slicer = frameHop(frameSize, frameSize, function onFrame (frame) {
-    push(new Float32Array(frame))
+    push(frame)
   }.bind(this), Math.pow(frameSize, 2))
   
   return function (chunk, enc, cb) {
