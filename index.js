@@ -1,11 +1,11 @@
 var mic = require('microphone')
 var through = require('through2')
 var rangeFit = require('range-fit')
-var Cbuffer = require('CBuffer')
 var frequencyWorker = require('frequency-viewer').worker
 var deltaTimer = require('delta-timer')
 var beatDetector = require('beats')
 var range = require('lodash.range')
+var frameHop = require('frame-hop')
 
 var byteRate = 2
 var numChannels = 1
@@ -39,7 +39,7 @@ mic.audioStream
   cb(null, chunk[0])
 }))
 .pipe(through.obj(fitWithinMag1()))
-.pipe(through.obj(circularize(bufferSize)))
+.pipe(through.obj(frame(bufferSize)))
 .pipe(through.obj(getFrequencies()))
 .pipe(through.obj(getBeats(
   range(width)
@@ -68,11 +68,16 @@ function fitWithinMag1 () {
   }
 }
 
-function circularize (length) {
-  var cbuf = Cbuffer(length)
+function frame (frameSize) {
+  var push = null
+  var slicer = frameHop(frameSize, frameSize, function onFrame (frame) {
+    push(new Float32Array(frame))
+  }.bind(this), Math.pow(frameSize, 2))
+  
   return function (chunk, enc, cb) {
-    cbuf.push.apply(cbuf, chunk)
-    cb(null, cbuf.toArray())
+    push = this.push.bind(this)
+    slicer(chunk)
+    cb()
   }
 }
 
