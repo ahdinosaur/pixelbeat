@@ -24,7 +24,9 @@ function play (opts) {
 
   rainbowPixels({
     shape: opts.shape,
-    inc: opts.inc
+    inc: opts.inc,
+    saturation: 1,
+    value: 0.3
   })
   .pipe(throttle({
     objectMode: true,
