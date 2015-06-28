@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/ahdinosaur/pixelbeat",
   "dependencies": {
-    "microphone": "git://github.com/WRMilling/node-microphone",
+    "floodgate": "^0.1.2",
     "through2": "^0.6.5"
   }
 }

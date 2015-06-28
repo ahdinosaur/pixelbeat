@@ -1,33 +1,28 @@
-var mic = require('microphone')
+var rainbowPixels = require('rainbow-pixels')
+var pixelsToOpc = require('ndpixels-opc')
+var net = require('net')
 var through = require('through2')
+var throttle = require('floodgate')
 
-var byteRate = 2
-var numChannels = 2
+var socket = net.connect({
+  port: 7890,
+  host: '192.168.7.2'
+//  host: 'localhost'
+}, function () {
+  console.log("connected to", 'tcp://' + socket.remoteAddress + ':' + socket.remotePort )
 
-mic.startCapture({
-  alsa_device: 'plughw:0,0',
-  alsa_format: 'dat',
-  alsa_addn_args: ['-t', 'raw'],
+  rainbowPixels({
+    shape: [16, 16],
+    inc: 1
+  })
+  .pipe(throttle({
+    objectMode: true,
+    interval: 25
+  }))
+  .pipe(pixelsToOpc())
+  .pipe(socket)
 })
-mic.infoStream.pipe(process.stderr)
+.on('error', function (err) {
+  throw err
+})
 
-mic.audioStream
-.pipe(through.obj(function (buf, enc, cb) {
-  var numSamples = buf.length / (byteRate * numChannels)
-
-  var chunk = [[], []]
-  var sampleIndex, channelIndex, offset
-  for (sampleIndex = 0; sampleIndex < numSamples; sampleIndex++) {
-    for (channelIndex = 0; channelIndex < numChannels; channelIndex++) {
-      offset = sampleIndex + channelIndex
-      chunk[channelIndex][sampleIndex] = buf.readUInt16LE(offset)
-    }
-  }
-  this.push(chunk)
-  cb()
-}))
-.pipe(through.obj(function (chunk, enc, cb) {
-  this.push(JSON.stringify(chunk))
-  cb()
-}))
-.pipe(process.stdout)
