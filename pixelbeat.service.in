@@ -1,0 +1,10 @@
+[Unit]
+Description=pixels
+
+[Service]
+WorkingDirectory=PIXELBEAT_PATH/
+ExecStart=PIXELBEAT_PATH/run
+KillMode=control-group
+
+[Install]
+WantedBy=multi-user.target

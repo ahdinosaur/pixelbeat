@@ -6,15 +6,15 @@ var throttle = require('floodgate')
 
 play({
   shape: [16, 16],
-  fps: 120,
+  fps: 60,
   inc: 1
 })
 
 function play (opts) {
   var socket = net.connect({
     port: 7890,
-    host: '192.168.7.2'
-  //  host: 'localhost'
+//  host: '192.168.7.2'
+    host: 'localhost'
   }, function () {
     console.log("connected to", 'tcp://' + socket.remoteAddress + ':' + socket.remotePort )
   })
@@ -24,9 +24,7 @@ function play (opts) {
 
   rainbowPixels({
     shape: opts.shape,
-    inc: opts.inc,
-    saturation: 1,
-    value: 0.3
+    inc: opts.inc
   })
   .pipe(throttle({
     objectMode: true,

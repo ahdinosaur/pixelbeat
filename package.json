@@ -24,6 +24,8 @@
   "homepage": "https://github.com/ahdinosaur/pixelbeat",
   "dependencies": {
     "floodgate": "^0.1.2",
+    "ndpixels-opc": "ahdinosaur/ndpixels-opc",
+    "rainbow-pixels": "ahdinosaur/rainbow-pixels",
     "through2": "^0.6.5"
   }
 }
