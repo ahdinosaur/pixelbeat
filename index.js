@@ -7,7 +7,8 @@ var throttle = require('floodgate')
 play({
   shape: [16, 16],
   fps: 60,
-  inc: 1
+  inc: 1,
+  value: 0.3
 })
 
 function play (opts) {
@@ -24,7 +25,8 @@ function play (opts) {
 
   rainbowPixels({
     shape: opts.shape,
-    inc: opts.inc
+    inc: opts.inc,
+    value: opts.value
   })
   .pipe(throttle({
     objectMode: true,
