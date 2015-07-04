@@ -14,8 +14,8 @@ var convert = require('ndpixels-convert')
 var assign = require('lodash.assign')
 
 play({
-  //shape: [16, 16],
-  shape: [process.stdout.columns, process.stdout.rows],
+  shape: [16, 16],
+  //shape: [process.stdout.columns, process.stdout.rows],
   channels: 1,
   buffer: 1024,
   fps: 60,
@@ -24,10 +24,9 @@ play({
 })
 
 function play (opts) {
-  /*
   var socket = net.connect({
     port: 7890,
-//  host: '192.168.7.2'
+    //host: '192.168.2.7'
     host: 'localhost'
   }, function () {
     console.log("connected to", 'tcp://' + socket.remoteAddress + ':' + socket.remotePort )
@@ -35,7 +34,6 @@ function play (opts) {
   .on('error', function (err) {
     throw err
   })
-  */
 
   var audio = readAudio(opts)
 
@@ -56,11 +54,11 @@ function play (opts) {
   .pipe(plotRms(opts))
   .pipe(overlayRainbow(opts))
   .pipe(convertStream('hsv', 'rgb'))
-  .pipe(pixelsToTerminal(assign({}, opts, {
-    shape: opts.shape.concat([3])
-  })))
-  //.pipe(pixelsToOpc())
-  //.pipe(socket)
+  //.pipe(pixelsToTerminal(assign({}, opts, {
+  //  shape: opts.shape.concat([3])
+  //})))
+  .pipe(pixelsToOpc())
+  .pipe(socket)
 }
 
 function plotRms (opts) {
