@@ -13,7 +13,7 @@ var rangeFit = require('range-fit')
 
 play({
   //shape: [16, 16],
-  shape: [process.stdout.rows, process.stdout.columns],
+  shape: [process.stdout.columns, process.stdout.rows],
   fps: 60,
   inc: 1,
   value: 0.3
@@ -37,7 +37,7 @@ function play (opts) {
     channels: 1
   })
 
-  audio.stderr.pipe(process.stderr)
+  //audio.stderr.pipe(process.stderr)
 
   audio
   .pipe(audioRms(opts))
@@ -45,7 +45,7 @@ function play (opts) {
     cb(null, audio.data)
   }))
   .pipe(frameHop({
-    frameSize: 128,
+    frameSize: opts.shape[0],
     hopSize: 1
   }))
   .pipe(through.obj(function (data, enc, cb) {
@@ -67,7 +67,7 @@ function plotRms (opts) {
       var value = rangeFit(rms.get(x), minPoint, maxPoint, 0.0, 1.0)
       var height = Math.ceil(value * opts.shape[1])
       for (var y = 0; y < height; y++) {
-        frame.set(x, y, 1)
+        frame.set(x, opts.shape[1] - y, 1)
       }
     }
     //console.log("rms", frame)
