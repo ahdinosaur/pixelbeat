@@ -14,6 +14,8 @@ var rangeFit = require('range-fit')
 play({
   //shape: [16, 16],
   shape: [process.stdout.columns, process.stdout.rows],
+  channels: 1,
+  buffer: 1024,
   fps: 60,
   inc: 1,
   value: 0.3
@@ -33,16 +35,14 @@ function play (opts) {
   })
   */
 
-  var audio = readAudio({
-    channels: 1
-  })
+  var audio = readAudio(opts)
 
-  //audio.stderr.pipe(process.stderr)
+  audio.stderr.pipe(process.stderr)
 
   audio
   .pipe(audioRms(opts))
-  .pipe(through.obj(function (audio, enc, cb) {
-    cb(null, audio.data)
+  .pipe(through.obj(function (rms, enc, cb) {
+    cb(null, rms.data)
   }))
   .pipe(frameHop({
     frameSize: opts.shape[0],
@@ -67,10 +67,9 @@ function plotRms (opts) {
       var value = rangeFit(rms.get(x), minPoint, maxPoint, 0.0, 1.0)
       var height = Math.ceil(value * opts.shape[1])
       for (var y = 0; y < height; y++) {
-        frame.set(x, opts.shape[1] - y, 1)
+        frame.set(opts.shape[0] - x, y, 1)
       }
     }
-    //console.log("rms", frame)
     cb(null, frame)
   })
 }
@@ -90,7 +89,6 @@ function overlayRainbow (opts) {
         }
       }
     }
-    //console.log("frame", frame.data)
     cb(null, frame)
   })
 }
