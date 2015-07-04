@@ -23,9 +23,15 @@
   },
   "homepage": "https://github.com/ahdinosaur/pixelbeat",
   "dependencies": {
+    "2dpixels-terminal": "ahdinosaur/2dpixels-terminal",
     "floodgate": "^0.1.2",
+    "frame-hop": "ahdinosaur/frame-hop",
+    "ndarray": "^1.0.18",
     "ndpixels-opc": "ahdinosaur/ndpixels-opc",
+    "node-audio-rms": "ahdinosaur/node-audio-rms",
     "rainbow-pixels": "ahdinosaur/rainbow-pixels",
-    "through2": "^0.6.5"
+    "read-audio": "livejs/read-audio",
+    "through2": "^0.6.5",
+    "zeros": "^1.0.0"
   }
 }
